@@ -1,0 +1,11 @@
+*/timer.dat
+*.pyc
+*.egg*
+__pycache__/*
+*/__pycache__/*
+.pytest*
+*.npy
+*.dat
+examples/h2_pes/coulomb/pes/*
+examples/h2_pes/input_gen/h2_pes/*
+examples/multi-species training/pes/*
