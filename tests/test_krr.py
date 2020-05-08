@@ -37,7 +37,7 @@ def test_krr_wrap():
     ds.setup = setup
     ds.data = data
     ds,t_AVG = ds.train("KRR")
-    a_pred = ds.predict(v_reps)
+    a_pred = ds.predict()
     a_pred = np.add(a_pred,t_AVG)
 
     # SKL 
