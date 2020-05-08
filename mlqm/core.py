@@ -569,10 +569,13 @@ class Dataset(object):
                 print("Loading coefficients from Dataset.")
                 alpha = np.asarray(self.data['a'])
                 krr.dual_coef_ = alpha
+                krr.X_fit_ = t_REPS
             else:
                 print("Model training using s = {} and l = {} . . .".format(self.data['s'],self.data['l']))
                 krr.fit(t_REPS,t_VALS)
                 self.data['a'] = list(krr.dual_coef_)
+            self.skl = krr
+            print("Scikit-Learn model available.")
             return self, t_AVG
             # }}}
 
@@ -585,3 +588,21 @@ class Dataset(object):
         else:
             raise RuntimeError("Cannot train using {} yet.".format(traintype))
         # }}}
+
+    def predict(self, X, Xt=None):
+# {{{
+        '''
+        Automatically predict using saved ds model
+        Currently defaults to using skl object
+        Must add other capability!
+        '''
+        # Case 1: no skl object available
+        try:
+            skl = self.skl
+        except AttributeError:
+            raise Exception('No Scikit-Learn object available! Please run DataSet.train().')
+
+        # Case 2: a fully-prepared skl object is available
+        return self.skl.predict(X)
+# }}}
+
