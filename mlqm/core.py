@@ -589,16 +589,28 @@ class Dataset(object):
             raise RuntimeError("Cannot train using {} yet.".format(traintype))
         # }}}
 
-    def predict(self, X, Xt=None):
+    def predict(self, X=None):
 # {{{
         '''
-        Automatically predict using saved ds model
-        Currently defaults to using skl object
-        Must add other capability!
+        Automatically predict using skl object in Dataset
+
+        Parameters:
+        X (optional): ndarray, shape (M,N) w/ M = #points and N = #features
+
+        Returns:
+        self.skl.predict(X): ndarray, shape (M,) w/ M = #points
         '''
+        if not X: # no test set passed
+            if 'trainers' in self.data and self.data['trainers']: # remove training set
+                X = np.delete(self.grand["representations"],self.data['trainers'],axis=0)
+            else:
+                X = self.grand["representations"] # use entire grand set for testing
+        else:
+            print("Predicting {}-point test set...".format(X.shape))
+
         # Case 1: no skl object available
         try:
-            skl = self.skl
+            self.skl
         except AttributeError:
             raise Exception('No Scikit-Learn object available! Please run DataSet.train().')
 
