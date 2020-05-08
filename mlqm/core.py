@@ -606,6 +606,7 @@ class Dataset(object):
             else:
                 X = self.grand["representations"] # use entire grand set for testing
         else:
+            X = np.asarray(X)
             print("Predicting {}-point test set...".format(X.shape))
 
         # Case 1: no skl object available
