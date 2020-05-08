@@ -569,10 +569,13 @@ class Dataset(object):
                 print("Loading coefficients from Dataset.")
                 alpha = np.asarray(self.data['a'])
                 krr.dual_coef_ = alpha
+                krr.X_fit_ = t_REPS
             else:
                 print("Model training using s = {} and l = {} . . .".format(self.data['s'],self.data['l']))
                 krr.fit(t_REPS,t_VALS)
                 self.data['a'] = list(krr.dual_coef_)
+            self.skl = krr
+            print("Scikit-Learn model available.")
             return self, t_AVG
             # }}}
 
@@ -585,3 +588,33 @@ class Dataset(object):
         else:
             raise RuntimeError("Cannot train using {} yet.".format(traintype))
         # }}}
+
+    def predict(self, X=None):
+# {{{
+        '''
+        Automatically predict using skl object in Dataset
+
+        Parameters:
+        X (optional): ndarray, shape (M,N) w/ M = #points and N = #features
+
+        Returns:
+        self.skl.predict(X): ndarray, shape (M,) w/ M = #points
+        '''
+        if not X: # no test set passed
+            if 'trainers' in self.data and self.data['trainers']: # remove training set
+                X = np.delete(self.grand["representations"],self.data['trainers'],axis=0)
+            else:
+                X = self.grand["representations"] # use entire grand set for testing
+        else:
+            print("Predicting {}-point test set...".format(X.shape))
+
+        # Case 1: no skl object available
+        try:
+            self.skl
+        except AttributeError:
+            raise Exception('No Scikit-Learn object available! Please run DataSet.train().')
+
+        # Case 2: a fully-prepared skl object is available
+        return self.skl.predict(X)
+# }}}
+
