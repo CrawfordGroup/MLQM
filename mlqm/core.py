@@ -554,8 +554,8 @@ class Dataset(object):
                     k = kwargs['k']
                 else:
                     k = self.setup['M']
-                parameters = {'alpha':np.logspace(-12,12,num=50),
-                              'gamma':np.logspace(-12,12,num=50)}
+                parameters = {'alpha':np.logspace(-12,12,num=12),
+                              'gamma':np.logspace(-12,12,num=12)}
                 krr_regressor = GridSearchCV(krr,parameters,scoring=loss,cv=k)
                 krr_regressor.fit(t_REPS,t_VALS)
                 self.data['hypers'] = True
