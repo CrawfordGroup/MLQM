@@ -18,7 +18,7 @@ def test_krr_wrap():
     # MLQM (default):
     ## rbf kernel
     ## k-fold CV (k = M)
-    ## alpha/gamma hypers opt on np.logspace(-12,12,num=50)
+    ## alpha/gamma hypers opt on np.logspace(-12,12,num=12)
     ## neg_mean_squared_error loss
     ## training targets automatically shifted by average
     setup = {
@@ -36,7 +36,7 @@ def test_krr_wrap():
     ds = mlqm.Dataset(reps = reps, vals = mp2_E)
     ds.setup = setup
     ds.data = data
-    ds,t_AVG = ds.train("KRR")
+    ds,t_AVG = ds.train("KRR",gridp=12)
     a_pred = ds.predict()
     a_pred = np.add(a_pred,t_AVG)
 
@@ -44,8 +44,8 @@ def test_krr_wrap():
     ## use MLQM defaults, manually shift training targets
     krr = KernelRidge(kernel='rbf')
     avg = np.mean(t_mp2_E)
-    parameters = {'alpha':np.logspace(-12,12,num=50),
-                  'gamma':np.logspace(-12,12,num=50)}
+    parameters = {'alpha':np.logspace(-12,12,num=12),
+                  'gamma':np.logspace(-12,12,num=12)}
     krr_regressor = GridSearchCV(krr,parameters,scoring='neg_mean_squared_error',cv=len(t_mp2_E))
     krr_regressor.fit(t_reps,t_mp2_E-avg)
     krr = krr_regressor.best_estimator_
