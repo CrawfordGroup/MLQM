@@ -517,11 +517,8 @@ class Dataset(object):
         if 'loss' in kwargs:
             loss = kwargs['loss']
         else:
-            loss = 'neg_mean_squared_error' # erratic for LiF
-#            loss = 'neg_mean_absolute_error' # erratic
-#            loss = 'explained_variance' # smooth but wrong for LiF
-#            loss = 'neg_median_absolute_error' # erratic
             # skl default is 'r2' but it's terrible
+            loss = 'neg_mean_squared_error'
         if 'kernel' in kwargs:
             kernel = kwargs['kernel']
         else:
@@ -530,7 +527,6 @@ class Dataset(object):
         if traintype.lower() in ["krr","kernel_ridge"]:
             # {{{
             print("Training via the {} algorithm . . .".format(traintype))
-#            ds, t_AVG = krr.train(self, **kwargs) 
             from sklearn.kernel_ridge import KernelRidge
             from sklearn.model_selection import GridSearchCV
 
@@ -554,8 +550,12 @@ class Dataset(object):
                     k = kwargs['k']
                 else:
                     k = self.setup['M']
-                parameters = {'alpha':np.logspace(-12,12,num=12),
-                              'gamma':np.logspace(-12,12,num=12)}
+                if 'gridp' in kwargs:
+                    gridp = kwargs['gridp']
+                else:
+                    gridp = 12
+                parameters = {'alpha':np.logspace(-12,12,num=gridp),
+                              'gamma':np.logspace(-12,12,num=gridp)}
                 krr_regressor = GridSearchCV(krr,parameters,scoring=loss,cv=k)
                 krr_regressor.fit(t_REPS,t_VALS)
                 self.data['hypers'] = True

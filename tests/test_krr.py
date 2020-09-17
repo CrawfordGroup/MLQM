@@ -36,7 +36,7 @@ def test_krr_wrap():
     ds = mlqm.Dataset(reps = reps, vals = mp2_E)
     ds.setup = setup
     ds.data = data
-    ds,t_AVG = ds.train("KRR")
+    ds,t_AVG = ds.train("KRR",gridp=12)
     a_pred = ds.predict()
     a_pred = np.add(a_pred,t_AVG)
 
